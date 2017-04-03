@@ -1,5 +1,5 @@
 # BusinessFinder
-Business Finder is a Web Application that helps a user pick a restaurant or an experience. Using Yelp's Fusion API, Business Finder allows you to search up a term, answer a few questions, and get three recommended results from your answers. There is also a trending page that gives recommendations for cuisines and places to search, and an about page that talks more about why the website was created and what the website hopes to accomplish.  
+Business Finder is a Web Application that helps a user pick a restaurant or an experience with a focus on having a clean and simple design. Using Yelp's Fusion API, Business Finder allows you to search up a term, answer a few questions, and get three recommended results from your answers. There is also a trending page that gives recommendations for cuisines and places to search, and an about page that talks more about why the website was created and what the website hopes to accomplish.  
 
 The web application uses HTML, CSS, and JS on the client-side, and PHP on the server side. On the index page, users are prompted to share their location, enter a search term, and answer a few questions, which is stored in a JS dictionary. The dictionary is then sent in an AJAX POST request to the php script, which returns a JSON string that is then parsed to show the businesses and locations on a map.
 
