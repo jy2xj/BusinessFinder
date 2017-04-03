@@ -1,29 +1,24 @@
 <?php
 
 /**
- * Yelp Fusion API code sample.
+ * Uses Yelp Fusion API
  *
  * This program demonstrates the capability of the Yelp Fusion API
- * by using the Business Search API to query for businesses by a 
- * search term and location, and the Business API to query additional 
- * information about the top result from the search query.
+ * by using the Business Search API to query for businesses, and 
+ * the Business API to query additional 
+ * information about the results from the search query.
  * 
  * Please refer to http://www.yelp.com/developers/v3/documentation 
  * for the API documentation.
  * 
- * Sample usage of the program:
- * `php sample.php --term="dinner" --location="San Francisco, CA"`
  */
 
 // OAuth credential placeholders that must be filled in by users.
 // You can find them on
 // https://www.yelp.com/developers/v3/manage_app
+// RUN ON HEROKU, SO SET ID AND SECRET AS CONFIG VARIABLES ON HEROKU
 $CLIENT_ID = getenv('ID');
 $CLIENT_SECRET = getenv('SECRET');
-
-// Complain if credentials haven't been filled out.
-//assert($CLIENT_ID, "Please supply your client_id.");
-//assert($CLIENT_SECRET, "Please supply your client_secret.");
 
 // API constants, you shouldn't have to change these.
 $API_HOST = "https://api.yelp.com";
@@ -31,11 +26,6 @@ $SEARCH_PATH = "/v3/businesses/search";
 $BUSINESS_PATH = "/v3/businesses/";  // Business ID will come after slash.
 $TOKEN_PATH = "/oauth2/token";
 $GRANT_TYPE = "client_credentials";
-
-// Defaults for our simple example.
-$DEFAULT_TERM = "dinner";
-$DEFAULT_LOCATION = "San Francisco, CA";
-$SEARCH_LIMIT = 3;
 
 /**
  * Given a bearer token, send a GET request to the API.
@@ -142,14 +132,13 @@ function request($bearer_token, $host, $path, $url_params = array()) {
 }
 
 /**
- * Query the Search API by a search term and location 
+ * Query the Search API by an array 
  * 
  * @param    $bearer_token   API bearer token from obtain_bearer_token
- * @param    $term        The search term passed to the API 
- * @param    $location    The search location passed to the API 
+ * @param    $search_arr     The search arr passed from the POST
  * @return   The JSON response from the request 
  */
-function search($bearer_token, $term, $location, $search_arr) {
+function search($bearer_token, $search_arr) {
     $url_params = array();
     
     //$url_params['term'] = $term;
@@ -205,34 +194,29 @@ function find_best_restaurants($bearer_token, $response) {
     $total = count($response->businesses);
     $i = 0;
     $arr = array();
+    // goes until 3 businesses or total
     while ($num < 3 and $i < $total) {
         $business_id = $response->businesses[$i]->id;
         $business = get_business($bearer_token, $business_id);
         $business_json = json_decode($business,true);
-        //echo $business_json["hours"][0]["is_open_now"];
         array_push($arr, array($business_json["name"],$business_json["url"],$business_json["image_url"],$business_json["price"],
             $business_json["location"]["display_address"][0],$business_json["location"]["display_address"][1],
             $business_json["phone"], $business_json["coordinates"]["latitude"], $business_json["coordinates"]["longitude"])); 
         $i++;
         $num++;
     }
-    /*foreach($arr as $result) {
-        echo $var_dump(result), '<br>';
-    }*/
     echo json_encode($arr);
 }
 
 /**
- * Queries the API by the input values from the user 
+ * Queries the API by the post data from the user 
  * 
- * @param    $term        The search term to query
- * @param    $location    The location of the business to query
  */
-function query_api($term, $location) {     
+function query_api() {     
     $bearer_token = obtain_bearer_token();
 
     $arr = json_decode($_POST['search_data'], true);
-    $response = json_decode(search($bearer_token, $term, $location, $arr));
+    $response = json_decode(search($bearer_token, $arr));
     //$business_id = $response->businesses[0]->id;
     
     //$response = get_business($bearer_token, $business_id);
@@ -262,9 +246,6 @@ function query_api($term, $location) {
     
 $options = getopt("", $longopts);*/
 
-$term = $GLOBALS['DEFAULT_TERM'];
-$location = $GLOBALS['DEFAULT_LOCATION'];
-
-query_api($term, $location);
+query_api();
 
 ?>
