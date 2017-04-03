@@ -23,4 +23,14 @@ $app->get('/', function() use($app) {
   //return str_repeat('Hello', getenv('TIMES'));
 });
 
+$app->get('/trending.html', function() use($app) {
+  $app['monolog']->addDebug('logging output.');
+  return $app['twig']->render('trending.html');
+});
+
+$app->get('/about.html', function() use($app) {
+  $app['monolog']->addDebug('logging output.');
+  return $app['twig']->render('about.html');
+});
+
 $app->run();
