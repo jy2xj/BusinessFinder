@@ -23,6 +23,12 @@ $app->get('/', function() use($app) {
   //return str_repeat('Hello', getenv('TIMES'));
 });
 
+$app->get('/trending.html', function() use($app) {
+  $app['monolog']->addDebug('cowsay');
+  return $app['twig']->render('trending.html');
+  //return "<pre>".\Cowsayphp\Cow::say("Cool beans")."</pre>";
+});
+
 $app->get('/about.html', function() use($app) {
   $app['monolog']->addDebug('cowsay');
   return $app['twig']->render('about.html');
