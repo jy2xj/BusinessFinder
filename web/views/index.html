@@ -200,7 +200,7 @@
           alert("Getting Results!");
           str = JSON.stringify(dict, null, 4);
           json_str = JSON.stringify(dict);
-          $.post("questions.php",
+          $.post("./views/questions.php",
             { search_data: json_str },
             function(data,status){
                   //var rettype = $(data).text();
