@@ -16,6 +16,7 @@
 // OAuth credential placeholders that must be filled in by users.
 // You can find them on
 // https://www.yelp.com/developers/v3/manage_app
+// RUN ON HEROKU, SO SET ID AND SECRET AS CONFIG VARIABLES ON HEROKU
 $CLIENT_ID = getenv('ID');
 $CLIENT_SECRET = getenv('SECRET');
 
