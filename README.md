@@ -14,7 +14,7 @@ Extra Features:
 
 ### Installing and Running the App
 
--1- In order to get this working on a Heroku server, you need a few things. If you are just trying to get working on localhost, go to -2-:
+**-1-** In order to get this working on a Heroku server, you need a few things. If you are just trying to get working on localhost, go to **-2-**:
 - A Heroku account
 - PHP installed locally
 - Composer installed locally
@@ -36,6 +36,7 @@ git push heroku master
 
 In addition, to connect to Yelp's Fusion API, an ID and secret is required, 
 which can be found at this link: https://www.yelp.com/developers
+
 You should make changes to lines 20 and 21 in questions.php:
 
 ```
@@ -62,10 +63,11 @@ heroku ps:scale web=1
 heroku open
 ```
 
--2- If you are trying to get this working on your local server, you only need four files in the web directory: index.html, trending.html, about.html, and questions.php. You will have to change some paths in the files as they are locally pathed for Heroku. In addition, there are a few things you have to do.
+**-2-** If you are trying to get this working on your local server, you only need four files in the web directory: index.html, trending.html, about.html, and questions.php. You will have to change some paths in the files as they are locally pathed for Heroku. In addition, there are a few things you have to do.
 
 To connect to Yelp's Fusion API, an ID and secret is required, 
 which can be found at this link: https://www.yelp.com/developers
+
 You should make changes to lines 20 and 21 in questions.php:
 
 ```
