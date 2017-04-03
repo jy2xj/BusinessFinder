@@ -12,9 +12,9 @@ Extra Features:
 - Plots merchants (and your location) on a map using the Google Maps API
 - Interactive user interface with question answering
 
-### Installing
+### Installing and Running the App
 
-In order to get this working on your server, you need a few things:
+-1- In order to get this working on a Heroku server, you need a few things. If you are just trying to get working on localhost, go to -2-:
 - A Heroku account
 - PHP installed locally
 - Composer installed locally
@@ -34,10 +34,49 @@ heroku create
 git push heroku master
 ```
 
+In addition, to connect to Yelp's Fusion API, an ID and secret is required, 
+which can be found at this link: https://www.yelp.com/developers
+You should make changes to lines 20 and 21 in questions.php:
+
+```
+$CLIENT_ID = getenv('ID');
+$CLIENT_SECRET = getenv('SECRET');
+```
+
+You can also just add config vars ID and SECRET to Heroku:
+
+```
+heroku config:set ID=YELP_FUSION_ID
+heroku config:set SECRET=YELP_FUSION_SECRET
+```
+
+Also, make sure you change the JS key from the Google Maps API to your own in index.html:
+
+```
+<script src="https://maps.googleapis.com/maps/api/js?key=YOURGOOGLEAPIKEY"></script>
+```
+
 And to start up an instance and open the website on your browser:
 ```
 heroku ps:scale web=1
 heroku open
+```
+
+-2- If you are trying to get this working on your local server, you only need four files in the web directory: index.html, trending.html, about.html, and questions.php. You will have to change some paths in the files as they are locally pathed for Heroku. In addition, there are a few things you have to do.
+
+To connect to Yelp's Fusion API, an ID and secret is required, 
+which can be found at this link: https://www.yelp.com/developers
+You should make changes to lines 20 and 21 in questions.php:
+
+```
+$CLIENT_ID = getenv('ID');
+$CLIENT_SECRET = getenv('SECRET');
+```
+
+Also, make sure you change the JS key from the Google Maps API to your own in index.html:
+
+```
+<script src="https://maps.googleapis.com/maps/api/js?key=YOURGOOGLEAPIKEY"></script>
 ```
 
 ## Authors
