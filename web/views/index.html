@@ -21,10 +21,9 @@
     <!-- Custom styles for this template -->
     <link href="theme.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"> </script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"> </script>
 
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzA8elngCIfvrV0vtj2IrP6AkEVjGQyNM"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -65,30 +64,22 @@
     </style>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzA8elngCIfvrV0vtj2IrP6AkEVjGQyNM"></script>
 
     <script type="text/javascript" language="javascript">
         var dict = {};
 
-        // checks if user presses enter for text field and calls get_data if pressed
-        function checkKey(e){
-            var enterKey = 13;
-            if (e.which == enterKey){
-                get_data();
-            }
-        }
-
-        // loads the chart and calls drawChart
+        //google.charts.load("current", {packages:["map"]});
+        //google.charts.setOnLoadCallback(drawChart);
         function getChart(restData) {
           google.charts.load("current", {packages:["map"]});
           google.charts.setOnLoadCallback(drawChart(restData));
         }
-
-        // creates the map with suggested locations marked
         function drawChart(restData) {
 
           var locations = [['Lat', 'Long', 'Name']];
-          // also adds current location marker if curr_loc was true
           if (dict["curr_loc"] == true) {
+            alert("current");
             var partsOfStr = dict["location"].split(',');
             locations.push([parseFloat(partsOfStr[0]),parseFloat(partsOfStr[1]),"Current Location"]);
           }
@@ -96,6 +87,7 @@
             locations.push([restData[i][7],restData[i][8],restData[i][0]]);
           }
           alert("Got Your Results!");
+          //alert(locations.toString());
           var data = google.visualization.arrayToDataTable(locations);
 
           var map = new google.visualization.Map(document.getElementById('map_div'));
@@ -105,8 +97,6 @@
           });
         }
 
-        // checks if text field for term is blank or not
-        // asks location question if term is entered
         function get_data() {
           var x = document.getElementById("search");
           if (x.value === "") {
@@ -115,7 +105,7 @@
           else {
             var y=document.getElementById("comments");
             y.innerHTML="I see you typed in <b>" + x.value + "</b>. Interesting...";
-            dict["term"] = x.value; // store term in dict
+            dict["term"] = x.value;
             var z = document.getElementById("active");
             z.innerHTML="<h2>Is this for your current location or elsewhere?</h2>";
             z.innerHTML+="<button type='button' onclick=\"get_time('current')\">Current Location</button>";
@@ -123,7 +113,6 @@
           }
         }
 
-        // prompts the user to enter a location and keeps asking until not blank
         function get_location() {
           var loc = prompt("Please enter a location in (city, state) format (e.g. Charlottesville, VA)", "");
           while (loc == null || loc == "") {
@@ -132,7 +121,6 @@
           get_time(loc);
         }
 
-        // stores the location into dict and asks about time question
         function get_time(location) {
           if (location == "current") {
             dict["curr_loc"] = true;
@@ -147,7 +135,6 @@
           x.innerHTML+="<button type='button' onclick='get_later_time()'>Different time</button>";
         }
 
-        // prompts the user to enter the time and keeps asking until not blank
         function get_later_time() {
           var time = prompt("Please enter a time in (Month Day, Year Hour:Minute:Second Timezone) format (e.g. April 10, 2017 10:30:00 UTC)", "");
           while (time == null || time == "") {
@@ -156,7 +143,6 @@
           get_cost(time);
         }
 
-        // stores the date into dict and asks about cost question
         function get_cost(go_date) {
           if (go_date == "now") {
             dict["open"] = true;
@@ -165,6 +151,7 @@
           else {
             dict["open"] = false;
             dict["time"] = Math.floor((new Date(go_date).getTime())/1000);
+            alert(dict["time"]);
           }
           var x = document.getElementById("active");
           x.innerHTML="<h2>How much money are you willing to pay?</h2>";
@@ -174,14 +161,16 @@
           x.innerHTML+="<button type='button' onclick=\"get_category('4')\">$$$$ (above $61)</button>";
         }
 
-        // stores the cost into dict and asks if user is ready to search
-        // gives option to start over
         function get_category(cost) {
           dict["cost"] = cost;
           var x = document.getElementById("active");
           x.innerHTML="<h2>Are you good or want to search for something else?</h2>";
           x.innerHTML+="<button type='button' onclick='get_restaurants()'>Search!</button>";
           x.innerHTML+="<button type='button' onclick='window.location.reload()'>Start Over</button>";
+        }
+
+        function start_over() {
+
         }
 
         /*function get_transaction() {
@@ -194,32 +183,31 @@
           x.innerHTML+="<button type='button' onclick='get_restaurants()'>Anything and Everything!</button>";
         }*/
 
-        // uses AJAX POST request to obtain JSON data
-        // uses JSON data of three restaurants and layouts the data
         function get_restaurants() {
           alert("Getting Results!");
           str = JSON.stringify(dict, null, 4);
           json_str = JSON.stringify(dict);
-          $.post("questions.php",
+          alert(str);
+          $.post("./views/questions.php",
             { search_data: json_str },
             function(data,status){
                   //var rettype = $(data).text();
                   var rettype = data;
                   var value = rettype.toString();
+                  alert(value);
                   var restData;
+                  alert("kk...");
                   var x = document.getElementById("comments");
                   try {
                     restData = jQuery.parseJSON(rettype);
                   }
-                  // if there is an error, put an alert out
                   catch(err) {
                       x.innerHTML="<div class='alert alert-danger' role='alert'>An Error Occurred!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
                       return;
                   }
-                  // success alert if everything is good
                   x.innerHTML="<div class='alert alert-success' role='alert'>Here Are Your Results!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
                   var length = Object.keys(restData).length;
-                  // indicates no business found if length is zero
+                  alert(length);
                   if (length == 0) {
                     x.innerHTML="<div class='alert alert-info' role='alert'>No Businesses Found!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
                   }
@@ -248,10 +236,9 @@
                   active.appendChild(div3);
                   getChart(restData);
           });
+          alert("hello?");
         }
 
-        // creates the individual div for each restaurant
-        // puts the info into innerHTML of the div
         function create_div(id,float,data) {
           var div = document.createElement("div");
           div.id = id;
@@ -269,6 +256,7 @@
             div.innerHTML = "<h2>Third Best</h2>";
           }
           if (data == null) {
+            alert("it's null");
             return div;
           }
           for (i = 0; i < Object.keys(data).length-2; i++) {
@@ -297,27 +285,6 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Business Finder</a>
-          </div>
-          <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="./web/trending.html">Trending</a></li>
-              <li><a href="./web/about.html">About</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </nav>
-
     <div class="finder">
       <p id="locinfo"></p>
 
@@ -346,7 +313,7 @@
       </div>
       <div id="active" class="interact">
         <span class="icon"><i class="fa fa-search"></i></span>
-        <input id="search" type="text" name="search" placeholder="Search.." onkeyup="checkKey(event)">
+        <input id="search" type="text" name="search" placeholder="Search..">
         <button id="find_button" class="btn btn-default" type="submit" onclick="get_data()">Find</button>
         <br/>
       </div>
