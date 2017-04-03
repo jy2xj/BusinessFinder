@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Business Finder</title>
+
+    <!-- Bootstrap 
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> -->
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="../../dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="theme.css" rel="stylesheet">
+
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzA8elngCIfvrV0vtj2IrP6AkEVjGQyNM"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+
+      .finder {
+        text-align:center;
+      }
+
+      .input[type=text] {
+        width: 130px;
+        -webkit-transition: width 0.4s ease-in-out;
+        transition: width 0.4s ease-in-out;
+      }
+
+      /* When the input field gets focus, change its width to 100% */
+      input[type=text]:focus {
+        width: 60%;
+      }
+
+      .round {
+        max-width:50%;
+        max-height:50%;
+        border-radius: 50%;
+        border-style: solid;
+      }
+
+      div#map_div { 
+        clear:both;
+        margin: 0 auto 0 auto; 
+      }
+
+    </style>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" language="javascript">
+        var dict = {};
+
+        // checks if user presses enter for text field and calls get_data if pressed
+        function checkKey(e){
+            var enterKey = 13;
+            if (e.which == enterKey){
+                get_data();
+            }
+        }
+
+        // loads the chart and calls drawChart
+        function getChart(restData) {
+          google.charts.load("current", {packages:["map"]});
+          google.charts.setOnLoadCallback(drawChart(restData));
+        }
+
+        // creates the map with suggested locations marked
+        function drawChart(restData) {
+
+          var locations = [['Lat', 'Long', 'Name']];
+          // also adds current location marker if curr_loc was true
+          if (dict["curr_loc"] == true) {
+            var partsOfStr = dict["location"].split(',');
+            locations.push([parseFloat(partsOfStr[0]),parseFloat(partsOfStr[1]),"Current Location"]);
+          }
+          for (i = 0; i < Object.keys(restData).length; i++) {
+            locations.push([restData[i][7],restData[i][8],restData[i][0]]);
+          }
+          alert("Got Your Results!");
+          var data = google.visualization.arrayToDataTable(locations);
+
+          var map = new google.visualization.Map(document.getElementById('map_div'));
+          map.draw(data, {
+            showTooltip: true,
+            showInfoWindow: true
+          });
+        }
+
+        // checks if text field for term is blank or not
+        // asks location question if term is entered
+        function get_data() {
+          var x = document.getElementById("search");
+          if (x.value === "") {
+            alert("You didn't type anything in!");
+          }
+          else {
+            var y=document.getElementById("comments");
+            y.innerHTML="I see you typed in <b>" + x.value + "</b>. Interesting...";
+            dict["term"] = x.value; // store term in dict
+            var z = document.getElementById("active");
+            z.innerHTML="<h2>Is this for your current location or elsewhere?</h2>";
+            z.innerHTML+="<button type='button' onclick=\"get_time('current')\">Current Location</button>";
+            z.innerHTML+="<button type='button' onclick='get_location()'>Another Location</button>";
+          }
+        }
+
+        // prompts the user to enter a location and keeps asking until not blank
+        function get_location() {
+          var loc = prompt("Please enter a location in (city, state) format (e.g. Charlottesville, VA)", "");
+          while (loc == null || loc == "") {
+              loc = prompt("Please enter a location in (city, state) format (e.g. Charlottesville, VA)", "");
+          }
+          get_time(loc);
+        }
+
+        // stores the location into dict and asks about time question
+        function get_time(location) {
+          if (location == "current") {
+            dict["curr_loc"] = true;
+          }
+          else {
+            dict["location"] = location;
+            dict["curr_loc"] = false;
+          }
+          var x = document.getElementById("active");
+          x.innerHTML="<h2>Are you trying to go now?</h2>";
+          x.innerHTML+="<button type='button' onclick=\"get_cost('now')\">Right now!</button>";
+          x.innerHTML+="<button type='button' onclick='get_later_time()'>Different time</button>";
+        }
+
+        // prompts the user to enter the time and keeps asking until not blank
+        function get_later_time() {
+          var time = prompt("Please enter a time in (Month Day, Year Hour:Minute:Second Timezone) format (e.g. April 10, 2017 10:30:00 UTC)", "");
+          while (time == null || time == "") {
+              time = prompt("Please enter a time in (Month Day, Year Hour:Minute:Second Timezone) format (e.g. April 10, 2017 10:30:00 UTC)", "");
+          }
+          get_cost(time);
+        }
+
+        // stores the date into dict and asks about cost question
+        function get_cost(go_date) {
+          if (go_date == "now") {
+            dict["open"] = true;
+            dict["time"] = "";
+          }
+          else {
+            dict["open"] = false;
+            dict["time"] = Math.floor((new Date(go_date).getTime())/1000);
+          }
+          var x = document.getElementById("active");
+          x.innerHTML="<h2>How much money are you willing to pay?</h2>";
+          x.innerHTML+="<button type='button' onclick=\"get_category('1')\">$ (under $10)</button>";
+          x.innerHTML+="<button type='button' onclick=\"get_category('2')\">$$ ($11-$30)</button>";
+          x.innerHTML+="<button type='button' onclick=\"get_category('3')\">$$$ ($31-$60)</button>";
+          x.innerHTML+="<button type='button' onclick=\"get_category('4')\">$$$$ (above $61)</button>";
+        }
+
+        // stores the cost into dict and asks if user is ready to search
+        // gives option to start over
+        function get_category(cost) {
+          dict["cost"] = cost;
+          var x = document.getElementById("active");
+          x.innerHTML="<h2>Are you good or want to search for something else?</h2>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>Search!</button>";
+          x.innerHTML+="<button type='button' onclick='window.location.reload()'>Start Over</button>";
+        }
+
+        /*function get_transaction() {
+          var x = document.getElementById("active");
+          x.innerHTML="<h2>Pickup, Delivery, Restaurant Reservation, No Reservation, or Anything is Good?</h2>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>Pickup</button>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>Delivery</button>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>Reservation</button>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>No Reservation</button>";
+          x.innerHTML+="<button type='button' onclick='get_restaurants()'>Anything and Everything!</button>";
+        }*/
+
+        // uses AJAX POST request to obtain JSON data
+        // uses JSON data of three restaurants and layouts the data
+        function get_restaurants() {
+          alert("Getting Results!");
+          str = JSON.stringify(dict, null, 4);
+          json_str = JSON.stringify(dict);
+          $.post("questions.php",
+            { search_data: json_str },
+            function(data,status){
+                  //var rettype = $(data).text();
+                  var rettype = data;
+                  var value = rettype.toString();
+                  var restData;
+                  var x = document.getElementById("comments");
+                  try {
+                    restData = jQuery.parseJSON(rettype);
+                  }
+                  // if there is an error, put an alert out
+                  catch(err) {
+                      x.innerHTML="<div class='alert alert-danger' role='alert'>An Error Occurred!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
+                      return;
+                  }
+                  // success alert if everything is good
+                  x.innerHTML="<div class='alert alert-success' role='alert'>Here Are Your Results!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
+                  var length = Object.keys(restData).length;
+                  // indicates no business found if length is zero
+                  if (length == 0) {
+                    x.innerHTML="<div class='alert alert-info' role='alert'>No Businesses Found!<a href='javascript:window.location.reload()'> Click here to start over</a></div>";
+                  }
+                  if (length != 0) {
+                    if (length == 1) {
+                      var div1 = create_div("div1","left", null);
+                      var div2 = create_div("div2","left", restData[0]);
+                      var div3 = create_div("div3","left", null);
+                    }
+                    else if (length == 2) {
+                      var div1 = create_div("div1","left", restData[1]);
+                      var div2 = create_div("div2","left", restData[0]);
+                      var div3 = create_div("div3","left", null);
+
+                    }
+                    else if (length == 3) {
+                      var div1 = create_div("div1","left", restData[1]);
+                      var div2 = create_div("div2","left", restData[0]);
+                      var div3 = create_div("div3","left", restData[2]);
+                    }
+                  }
+                  var active = document.getElementById("active");
+                  active.innerHTML="";
+                  active.appendChild(div1);
+                  active.appendChild(div2);
+                  active.appendChild(div3);
+                  getChart(restData);
+          });
+        }
+
+        // creates the individual div for each restaurant
+        // puts the info into innerHTML of the div
+        function create_div(id,float,data) {
+          var div = document.createElement("div");
+          div.id = id;
+          div.style.float = float;
+          div.style.margin = "0px";
+          div.style.width = "33%";
+          div.innerHTML = "";
+          if (id === "div1") {
+            div.innerHTML = "<h2>Second Best</h2>";
+          }
+          else if (id === "div2") {
+            div.innerHTML = "<h2>Best</h2>";
+          }
+          else if (id === "div3") {
+            div.innerHTML = "<h2>Third Best</h2>";
+          }
+          if (data == null) {
+            return div;
+          }
+          for (i = 0; i < Object.keys(data).length-2; i++) {
+            if (i == 0) {
+              div.innerHTML += "<h3>" + data[i] + "</h3>";
+              continue;
+            }
+            else if (i == 1) {
+              div.innerHTML += "<a href='" + data[i] + "'>Try it!</a></br>";
+              continue;
+            }
+            else if (i == 2 && data[i] !== "") {
+              div.innerHTML += "<img class='round' src='" + data[i] + "'/></br>";
+              continue;
+            }
+            else if (i == 3) {
+              div.innerHTML += "<h3><span class='label label-success'>" + data[i] + "</span></h3>";
+              continue;
+            }
+            div.innerHTML += "<h4>" + data[i] + "</h4>";
+          }
+          return div;
+        }
+
+    </script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Business Finder</a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="trending.html">Trending</a></li>
+              <li><a href="about.html">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+
+    <div class="finder">
+      <p id="locinfo"></p>
+
+      <div class = "jumbotron" style="background-size: 100% 100%;">
+      <h1>
+        Business Finder
+      </h1>
+      <script>
+        var x=document.getElementById("locinfo");
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          }
+          else{
+            x.innerHTML="Geolocation is not supported by this browser.";
+          }
+        }
+        function showPosition(position) {
+          /*x.innerHTML="Latitude: " + position.coords.latitude + 
+          "<br>Longitude: " + position.coords.longitude; */
+          dict["location"] = position.coords.latitude + "," + position.coords.longitude;
+        }
+        getLocation();
+      </script>
+      <p id="comments">Type in a term (e.g. "food", "restaurants"). Also, before you continue, please share your location.</p>
+      </div>
+      <div id="active" class="interact">
+        <span class="icon"><i class="fa fa-search"></i></span>
+        <input id="search" type="text" name="search" placeholder="Search.." onkeyup="checkKey(event)">
+        <button id="find_button" class="btn btn-default" type="submit" onclick="get_data()">Find</button>
+        <br/>
+      </div>
+
+    <div id="map_div" style="width: 400px; height: 300px"></div>
+
+    </div>
+    <div style="padding-bottom: 40px; text-align:center">Website made by Joshua Ya (jy2xj@virginia.edu)</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
