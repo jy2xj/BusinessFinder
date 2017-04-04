@@ -12,6 +12,10 @@ Extra Features:
 - Plots merchants (and your location) on a map using the Google Maps API
 - Interactive user interface with question answering
 
+### Demo
+First, click share location so that the app knows your coordinates.
+![Alt text](/screenshots/find_location.png?raw=true "Find Location")
+
 ### Installing and Running the App
 
 **-1-** In order to get this working on a Heroku server, you need a few things. If you are just trying to get working on localhost, go to **-2-**:
