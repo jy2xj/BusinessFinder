@@ -34,9 +34,9 @@ Once you search, an alert should appear. Click ok and wait for the next alert.
 Once the second alert pops up, click ok and you should get the results!
 ![Alt text](/screenshots/alert2.png?raw=true "Alert 2")
 
-![Alt text](/screenshots/results1.png?raw=true "Result 1")
+![Alt text](/screenshots/new_results1.png?raw=true "Result 1")
 
-![Alt text](/screenshots/results2.png?raw=true "Result 2")
+![Alt text](/screenshots/new_results2.png?raw=true "Result 2")
 
 ### Installing and Running the App
 
