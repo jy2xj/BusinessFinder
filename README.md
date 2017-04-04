@@ -16,6 +16,28 @@ Extra Features:
 First, click share location so that the app knows your coordinates.
 ![Alt text](/screenshots/find_location.png?raw=true "Find Location")
 
+Search for "food" in the search box and press enter.
+![Alt text](/screenshots/food.png?raw=true "Search Food")
+
+Then, answer each of the questions (current location, right now, $$, search)
+![Alt text](/screenshots/location.png?raw=true "Current Location")
+
+![Alt text](/screenshots/time.png?raw=true "Current Time")
+
+![Alt text](/screenshots/money.png?raw=true "Two dollar option")
+
+![Alt text](/screenshots/search.png?raw=true "Search it")
+
+Once you search, an alert should appear. Click ok and wait for the next alert.
+![Alt text](/screenshots/alert1.png?raw=true "Alert 1")
+
+Once the second alert pops up, click ok and you should get the results!
+![Alt text](/screenshots/alert2.png?raw=true "Alert 2")
+
+![Alt text](/screenshots/results1.png?raw=true "Result 1")
+
+![Alt text](/screenshots/results2.png?raw=true "Result 2")
+
 ### Installing and Running the App
 
 **-1-** In order to get this working on a Heroku server, you need a few things. If you are just trying to get working on localhost, go to **-2-**:
