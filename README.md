@@ -31,7 +31,7 @@ Then, answer each of the questions (current location, right now, $$, search)
 Once you search, an alert should appear. Click ok and wait for the next alert.
 ![Alt text](/screenshots/alert1.png?raw=true "Alert 1")
 
-Once the second alert pops up, click ok and you should get the results!
+Once the second alert pops up, click ok and you should get the results! It should have at max three restaurants and a map with the restaurants' locations in the bottom center (image is to the left because I cropped the map part separately).
 ![Alt text](/screenshots/alert2.png?raw=true "Alert 2")
 
 ![Alt text](/screenshots/new_results1.png?raw=true "Result 1")
